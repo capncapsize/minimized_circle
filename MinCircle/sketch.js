@@ -1,7 +1,7 @@
 var Pset;
 
 var padding = 23;
-var scl = 2;
+var scl = 5;
 var originX; 
 var originY;
 
@@ -19,6 +19,16 @@ function setup() {
 	originX = round((xPix - padding*2 - 200)/2);
 	originY = originX;
 	pSet = new PointSet();
+
+	var p1 = new Point(-11,5, 200, 1);
+	var p2 = new Point(-3,-4, 200, 2);
+	var p3 = new Point(2,1, 200, 3);
+
+	pSet.add(p1);
+	pSet.add(p2);
+	pSet.add(p3);
+
+
 /*
 
 	var fileSelect = createFileInput(gotFile);
@@ -45,6 +55,7 @@ function setup() {
 
 function draw() {
   		background(51);
+  		pSet.show();
   		minCirc(pSet);
 }
 
