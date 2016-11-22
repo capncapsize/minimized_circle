@@ -95,14 +95,13 @@ function Circle2(p1, p2){
 	this.p1 = p1;
 	this.p2 = p2;
 
-	this.mid = new Point((this.p1.x + this.p2.x)/2, (this.p1.y + this.p2.y)/2, 0, 5);
-	this.w = sqrt(pow(this.p1.x - this.p2.x, 2) + pow(this.p1.y - this.p2.y, 2));
+	this.mid;// = new Point((this.p1.x + this.p2.x)/2, (this.p1.y + this.p2.y)/2, 0, 5);
+	this.w;// = sqrt(pow(this.p1.x - this.p2.x, 2) + pow(this.p1.y - this.p2.y, 2));
 
 	this.reCreate = function(){
 		var dx = (this.p1.x + this.p2.x)/2;
 		var dy = (this.p1.y + this.p2.y)/2;
 		this.mid = new Point(dx, dy, 0, 5);
-
 		this.w = sqrt(pow(this.p1.x - this.p2.x, 2) + pow(this.p1.y - this.p2.y, 2));
 	}
 
@@ -113,6 +112,8 @@ function Circle2(p1, p2){
 			ellipse(round(this.mid.x + padding/scl + originX/scl)*scl, round(this.mid.y + padding/scl + originY/scl)*scl, this.w*scl, this.w*scl);
 		}
 	}
+
+	this.reCreate();
 }
 
 function Circle3(p1, p2, p3){
@@ -153,11 +154,8 @@ function Circle3(p1, p2, p3){
         var x = (m1 * m2 * (p1.y - p3.y) - m1 * (p2.x + p3.x) + m2 * (p1.x + p2.x)) / (2 * (m2 - m1));
         var y = (-1 / m1) * (x - (p1.x + p2.x) / 2) + (p1.y + p2.y) / 2;
 
-        print("x: "+x+" y: "+y);
         this.mid = new Point(x, y, 0, 2);
         this.w = sqrt(pow(p1.x - x, 2) + pow(p1.y - y, 2))*2;
-
-        print("w: "+this.w);
 	}
 
 
@@ -177,16 +175,21 @@ function minCirc(set){
 	var Cmin = new Circle2(new Point(-200,0,0,1), new Point(200,0,0,1));
 	Cmin.show();
 
-	for (var i = 0; i < set.P.length; i++) {
-		for (var j = 0; j < set.P.length; j++) {
+	for (var i = 0; i < set.P.length-1; i++) {
+		for (var j = 0; j < set.P.length-1; j++) {
 			if(i != j){
-				C = Circle2(set.P[i], set.P[j]);
+				C = new Circle2(set.P[i], set.P[j]);
+				C.show();
+				s = pointInCircle(C.p2, C.p1, C.p2, set.P[3]);
+				print(s);
+				for (var k = 0; k < set.P.length-1; k++){
+					if(i != k && j != k){
+					
+					}
+				}
 			}
-			set.P[i]
 		}
-		set.P[i]
 	}
-
 
 
 //	var p1 = new Point(-11,5, 0, 1);
@@ -202,12 +205,12 @@ function minCirc(set){
 }
 
 function pointInCircle(a, b, c, d){
-	var adx = ax - dx;
-	var ady = ay - dy;
-	var bdx = bx - dx;
-	var bdy = by - dy;
-	var cdx = cx - dx;
-	var cdy = cy - dy;
+	var adx = a.x - d.x;
+	var ady = a.y - d.y;
+	var bdx = b.x - d.x;
+	var bdy = b.y - d.y;
+	var cdx = c.x - d.x;
+	var cdy = c.y - d.y;
 	var abdet = adx*bdy - bdx*ady;
 	var bcdet = bdx*cdy - cdx*bdy;
 	var cadet = cdx*ady - adx*cdy;
@@ -215,5 +218,7 @@ function pointInCircle(a, b, c, d){
 	var blift = bdx*bdx + bdy*bdy;
 	var clift = cdx*cdx + cdy*cdy;
 	var sign = alift*bcdet + blift*cadet + clift*abdet;
+
+	print("In: "+  sign);
 	return sign;
 }
