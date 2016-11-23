@@ -10,8 +10,8 @@ function Point(x, y, c, id) {
 		fill(this.c, this.o);
 		rect(round(this.x + padding/scl + originX/scl)*scl, round(this.y + padding/scl + originY/scl)*scl, 2, 2);
 		fill(0);
-		rect(round(this.x + padding/scl + originX/scl)*scl, round(this.y + padding/scl + originY/scl)*scl, 1, 1);
-		fill(0);
+		//rect(round(this.x + padding/scl + originX/scl)*scl, round(this.y + padding/scl + originY/scl)*scl, 1, 1);
+		//fill(0);
 		textSize(8);
 		text(this.id + "(" + this.x + "," + this.y +")", round(this.x + padding/scl + originX/scl)*scl + 2, round(this.y + padding/scl + originY/scl)*scl + 9);
 	}
@@ -214,7 +214,7 @@ function minCirc(set){
 						print("TESTING Cir("+set.P[i].id+", "+set.P[j].id+", " +set.P[k].id+") ");
 						for(var l = 0; l < set.P.length; l++){
 							if(i != l && j != l && k != l){
-								s = pointInCircle3(C.p1, C.p2, C.p3, set.P[l]);
+								s = pointInCircle2(C, set.P[l]);
 								print(set.P[l].id +" is "+ s);
 								//print(set.P[l]);
 								if(s < 0){

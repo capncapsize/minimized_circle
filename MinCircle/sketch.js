@@ -20,6 +20,7 @@ function setup() {
 	originY = originX;
 	pSet = new PointSet();
 
+	print(originX);
 	var p1 = new Point(-11,5, 200, 1);
 	var p2 = new Point(0,-10, 200, 2);
 	var p3 = new Point(2,1, 200, 3);
@@ -36,7 +37,7 @@ function setup() {
 
   	//var C = new Circle3(pSet.P[1], pSet.P[2], pSet.P[3]);
   	//C.show();
-  	//var s = pointInCircle3(C.p1, C.p2, C.p3, pSet.P[0])
+  	//var s = pointInCircle2(C, pSet.P[0])
   	//print("S: "+ s);
    	minCirc(pSet);
 
