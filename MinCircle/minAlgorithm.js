@@ -13,7 +13,7 @@ function Point(x, y, c, id) {
 		rect(round(this.x + padding/scl + originX/scl)*scl, round(this.y + padding/scl + originY/scl)*scl, 1, 1);
 		fill(0);
 		textSize(8);
-		text(this.id, round(this.x + padding/scl + originX/scl)*scl + 2, round(this.y + padding/scl + originY/scl)*scl + 9);
+		text(this.id + "(" + this.x + "," + this.y +")", round(this.x + padding/scl + originX/scl)*scl + 2, round(this.y + padding/scl + originY/scl)*scl + 9);
 	}
 }
 
@@ -172,10 +172,11 @@ function Circle3(p1, p2, p3){
 
 function minCirc(set){
 	var C;
+	var s;
 	var Cmin = new Circle2(new Point(-200,0,0,1), new Point(200,0,0,1));
 	Cmin.show();
 	print("---START---");
-
+	//Two point circle
 	for (var i = 0; i < set.P.length; i++) {
 		for (var j = 0; j < set.P.length; j++) {
 			if(i != j){
@@ -200,6 +201,40 @@ function minCirc(set){
 			}
 		}
 	}
+	//Cmin.show();
+	print("---THREE POINT---");
+	//Three point circle
+	s = -1;
+	for (var i = 0; i < set.P.length; i++){
+		for (var j = 0; j < set.P.length; j++){
+			if(i != j){
+				for (var k = 0; k < set.P.length; k++){
+					if(i != k && j != k){
+						C = new Circle3(set.P[i], set.P[j], set.P[k]);
+						print("TESTING Cir("+set.P[i].id+", "+set.P[j].id+", " +set.P[k].id+") ");
+						for(var l = 0; l < set.P.length; l++){
+							if(i != l && j != l && k != l){
+								s = pointInCircle3(C.p1, C.p2, C.p3, set.P[l]);
+								print(set.P[l].id +" is "+ s);
+								//print(set.P[l]);
+								if(s < 0){
+									print(set.P[l].id + ": is outside");
+									C = null;
+									break;
+								}
+							}
+						}
+						if(C != null && C.w < Cmin.w){
+							Cmin = C;
+							print("Found smaller circle Cir("+set.P[i].id+", "+set.P[j].id+", " +set.P[k].id+") s: "+s);
+						}
+					}
+				}
+			}
+
+		}
+	}
+
 	Cmin.show();
 
 
@@ -218,7 +253,6 @@ function minCirc(set){
 function pointInCircle2(C, d){
 	var sign;
 	var l = sqrt(pow(C.mid.x - d.x, 2) + pow(C.mid.y - d.y, 2));
-	print("Ln2: l: "+l+" w: "+C.w/2);
 	if(l >= C.w/2){
 		sign = -1;
 	}else{
@@ -242,7 +276,5 @@ function pointInCircle3(a, b, c, d){
 	var blift = bdx*bdx + bdy*bdy;
 	var clift = cdx*cdx + cdy*cdy;
 	var sign = alift*bcdet + blift*cadet + clift*abdet;
-
-	print("In3: "+  sign);
 	return sign;
 }

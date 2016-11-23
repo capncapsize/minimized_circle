@@ -33,7 +33,14 @@ function setup() {
 
   	background(51);
   	pSet.show();
-  	minCirc(pSet);
+
+  	//var C = new Circle3(pSet.P[1], pSet.P[2], pSet.P[3]);
+  	//C.show();
+  	//var s = pointInCircle3(C.p1, C.p2, C.p3, pSet.P[0])
+  	//print("S: "+ s);
+   	minCirc(pSet);
+
+  	
 
 /*
 
