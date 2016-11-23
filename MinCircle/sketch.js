@@ -21,15 +21,19 @@ function setup() {
 	pSet = new PointSet();
 
 	var p1 = new Point(-11,5, 200, 1);
-	var p2 = new Point(-3,-4, 200, 2);
+	var p2 = new Point(0,-10, 200, 2);
 	var p3 = new Point(2,1, 200, 3);
-	var p4 = new Point(-1,1, 200, 4);
+	var p4 = new Point(-2,1, 200, 4);
 
 	pSet.add(p1);
 	pSet.add(p2);
 	pSet.add(p3);
 	pSet.add(p4);
 
+
+  	background(51);
+  	pSet.show();
+  	minCirc(pSet);
 
 /*
 
@@ -57,9 +61,11 @@ function setup() {
 
 function draw() {
 	frameRate(1);
-  		background(51);
-  		pSet.show();
-  		minCirc(pSet);
+
+
+  //	background(51);
+  //	pSet.show();
+  //	minCirc(pSet);
 }
 
 function mouseReleased(){

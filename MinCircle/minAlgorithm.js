@@ -174,22 +174,33 @@ function minCirc(set){
 	var C;
 	var Cmin = new Circle2(new Point(-200,0,0,1), new Point(200,0,0,1));
 	Cmin.show();
+	print("---START---");
 
-	for (var i = 0; i < set.P.length-1; i++) {
-		for (var j = 0; j < set.P.length-1; j++) {
+	for (var i = 0; i < set.P.length; i++) {
+		for (var j = 0; j < set.P.length; j++) {
 			if(i != j){
 				C = new Circle2(set.P[i], set.P[j]);
-				C.show();
-				s = pointInCircle(C.p2, C.p1, C.p2, set.P[3]);
-				print(s);
-				for (var k = 0; k < set.P.length-1; k++){
+				//C.show();
+				for (var k = 0; k < set.P.length; k++){
 					if(i != k && j != k){
+						s = pointInCircle2(C, set.P[k]);
+						print("Cir("+set.P[i].id+", "+set.P[j].id+", w: "+ C.w+") then "+ set.P[j].id + " is :" + s);
+						if(s < 0){
+							print(set.P[k].id + ": is outside");
+							C = null;
+							break;
+						}
 					
 					}
+				}
+				if(C != null && C.w < Cmin.w){
+					Cmin = C;
+					print("Found smaller circle Cir("+set.P[i].id+", "+set.P[j].id+")");
 				}
 			}
 		}
 	}
+	Cmin.show();
 
 
 //	var p1 = new Point(-11,5, 0, 1);
@@ -204,7 +215,20 @@ function minCirc(set){
 
 }
 
-function pointInCircle(a, b, c, d){
+function pointInCircle2(C, d){
+	var sign;
+	var l = sqrt(pow(C.mid.x - d.x, 2) + pow(C.mid.y - d.y, 2));
+	print("Ln2: l: "+l+" w: "+C.w/2);
+	if(l >= C.w/2){
+		sign = -1;
+	}else{
+		sign = 1;
+	}
+	//print("In2: "+  sign);
+	return sign;
+}
+
+function pointInCircle3(a, b, c, d){
 	var adx = a.x - d.x;
 	var ady = a.y - d.y;
 	var bdx = b.x - d.x;
@@ -219,6 +243,6 @@ function pointInCircle(a, b, c, d){
 	var clift = cdx*cdx + cdy*cdy;
 	var sign = alift*bcdet + blift*cadet + clift*abdet;
 
-	print("In: "+  sign);
+	print("In3: "+  sign);
 	return sign;
 }
