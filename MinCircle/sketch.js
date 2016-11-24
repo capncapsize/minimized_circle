@@ -11,8 +11,8 @@ var computeHullButton;
 var loadPointsButton;
 var input;
 
-var xPix = 550 + padding*2;
-var yPix = 550 + padding*2;
+var xPix = 650 + padding*2;
+var yPix = 650 + padding*2;
 
 function setup() {
 	createCanvas(xPix,yPix);
@@ -20,26 +20,59 @@ function setup() {
 	originY = originX;
 	pSet = new PointSet();
 
-	print(originX);
-	var p1 = new Point(-11,5, 200, 1);
-	var p2 = new Point(0,-10, 200, 2);
-	var p3 = new Point(2,1, 200, 3);
-	var p4 = new Point(-2,1, 200, 4);
+
+	var sizeForOneSecondCalculation = 63;
+	var size = 63;
+	for (var i = 0; i < size; i++) {
+		pSet.add(new Point(round(random(-30,30)),round(random(-30,30)), 200, i));
+	}
+		
+
+
+
+/*	var p1 = new Point(-27, 29, 200, 0);
+	var p2 = new Point(17, 29, 200, 1);
+	var p3 = new Point(14, -30, 200, 2); 
+	var p4 = new Point(3, 20, 200, 3);
+
+	var C1 = new Circle3(p1, p2, p3);
+
+
+	print(C1);
 
 	pSet.add(p1);
 	pSet.add(p2);
 	pSet.add(p3);
-	pSet.add(p4);
+//	pSet.add(p4);
+*/
 
-
+	
+	
   	background(51);
   	pSet.show();
+
 
   	//var C = new Circle3(pSet.P[1], pSet.P[2], pSet.P[3]);
   	//C.show();
   	//var s = pointInCircle2(C, pSet.P[0])
   	//print("S: "+ s);
-   	minCirc(pSet);
+
+  	
+  	var startTime = millis();
+   	var Cmin = minCirc(pSet);
+    time = millis() - startTime;
+   	fill(255);
+	text("Brute Force Time: \t"+(time/1000)+" sec", 10,10);
+
+	Cmin.show();
+
+	startTime = millis();
+	var Cmin2 = miniDisc(pSet); 
+	time = millis() - startTime;
+	fill(255);
+	text("Improved Time: \t\t\t"+(time/1000)+" sec", 10,20);
+	Cmin2.highlight();
+
 
   	
 

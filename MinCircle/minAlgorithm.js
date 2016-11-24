@@ -9,7 +9,8 @@ function Point(x, y, c, id) {
 		stroke(this.c);
 		fill(this.c, this.o);
 		rect(round(this.x + padding/scl + originX/scl)*scl, round(this.y + padding/scl + originY/scl)*scl, 2, 2);
-		fill(0);
+		stroke(0)
+		fill(255);
 		//rect(round(this.x + padding/scl + originX/scl)*scl, round(this.y + padding/scl + originY/scl)*scl, 1, 1);
 		//fill(0);
 		textSize(8);
@@ -79,18 +80,6 @@ function PointSet(){
 	}
 }
 
-function Circ(x, y, w){
-	this.x = round(x + padding/scl + originX/scl)*scl;
-	this.y = round(y + padding/scl + originY/scl)*scl;
-	this.w = w*scl;
-
-	this.show = function(){
-		stroke(0);
-		fill(125);
-		ellipse(this.x, this.y, this.w, this.w);
-	}
-}
-
 function Circle2(p1, p2){
 	this.p1 = p1;
 	this.p2 = p2;
@@ -113,6 +102,14 @@ function Circle2(p1, p2){
 		}
 	}
 
+	this.highlight = function(){
+			p1.c = [90,255,20];
+			p2.c = [90,255,20];
+
+			p1.show();
+			p2.show();		
+	}
+
 	this.reCreate();
 }
 
@@ -126,9 +123,19 @@ function Circle3(p1, p2, p3){
 
 	this.reCreate = function(){
 
+	if(this.p2.x - this.p1.x == 0){
+		var p1 = this.p1;
+		var p3 = this.p2;
+		var p2 = this.p3;
+	}else if(this.p3.x - this.p2.x == 0){
+		var p2 = this.p1;
+		var p1 = this.p2;
+		var p3 = this.p3;
+	}else{
 		var p1 = this.p1;
 		var p2 = this.p2;
 		var p3 = this.p3;
+	}
 
 /*		var PQmid = new Point((P.x + Q.x)/2, (P.y + Q.y)/2, 0, 2);
 		var QRmid = new Point((Q.x + R.x)/2, (Q.y + R.y)/2, 0, 2);
@@ -146,13 +153,21 @@ function Circle3(p1, p2, p3){
 		var x = (-L1grad*PQmid.x + PQmid.y - QRmid.y + L2grad*QRmid.x)/(L2grad - L1grad);
 		var y = L1grad*(x - PQmid.x) + PQmid.y;*/
 
-		
+
 
 		var m1 = (p2.y - p1.y) / (p2.x - p1.x);
         var m2 = (p3.y - p2.y) / (p3.x - p2.x);
 
+        //print("m1: "+m1+",m2: "+m2);
+
         var x = (m1 * m2 * (p1.y - p3.y) - m1 * (p2.x + p3.x) + m2 * (p1.x + p2.x)) / (2 * (m2 - m1));
-        var y = (-1 / m1) * (x - (p1.x + p2.x) / 2) + (p1.y + p2.y) / 2;
+        if(m2 == 0){
+        	var y = (-1 / m1) * (x - (p1.x + p2.x) / 2) + (p1.y + p2.y) / 2;
+    	}else{
+    		var y = (-1 / m2) * (x - (p2.x + p3.x) / 2) + (p2.y + p3.y) / 2;
+    	}
+
+        //print("x: "+x+",y: "+y);
 
         this.mid = new Point(x, y, 0, 2);
         this.w = sqrt(pow(p1.x - x, 2) + pow(p1.y - y, 2))*2;
@@ -167,6 +182,16 @@ function Circle3(p1, p2, p3){
 		}
 	}
 
+	this.highlight = function(){
+			p1.c = [90,255,20];
+			p2.c = [90,255,20];
+			p3.c = [90,255,20];
+
+			p1.show();
+			p2.show();
+			p3.show();			
+	}
+
 	this.reCreate();
 }
 
@@ -174,8 +199,7 @@ function minCirc(set){
 	var C;
 	var s;
 	var Cmin = new Circle2(new Point(-200,0,0,1), new Point(200,0,0,1));
-	Cmin.show();
-	print("---START---");
+	//print("---TWO POINT---");
 	//Two point circle
 	for (var i = 0; i < set.P.length; i++) {
 		for (var j = 0; j < set.P.length; j++) {
@@ -184,10 +208,10 @@ function minCirc(set){
 				//C.show();
 				for (var k = 0; k < set.P.length; k++){
 					if(i != k && j != k){
-						s = pointInCircle2(C, set.P[k]);
-						print("Cir("+set.P[i].id+", "+set.P[j].id+", w: "+ C.w+") then "+ set.P[j].id + " is :" + s);
+						s = pointInCircle(C, set.P[k]);
+						//print("Cir("+set.P[i].id+", "+set.P[j].id+") then "+ set.P[j].id + " is :" + s);
 						if(s < 0){
-							print(set.P[k].id + ": is outside");
+							//print(set.P[k].id + ": is outside");
 							C = null;
 							break;
 						}
@@ -196,29 +220,26 @@ function minCirc(set){
 				}
 				if(C != null && C.w < Cmin.w){
 					Cmin = C;
-					print("Found smaller circle Cir("+set.P[i].id+", "+set.P[j].id+")");
+					//print("Found smaller circle Cir("+set.P[i].id+", "+set.P[j].id+")");
 				}
 			}
 		}
 	}
 	//Cmin.show();
-	print("---THREE POINT---");
+	//print("---THREE POINT---");
 	//Three point circle
-	s = -1;
 	for (var i = 0; i < set.P.length; i++){
 		for (var j = 0; j < set.P.length; j++){
 			if(i != j){
 				for (var k = 0; k < set.P.length; k++){
 					if(i != k && j != k){
 						C = new Circle3(set.P[i], set.P[j], set.P[k]);
-						print("TESTING Cir("+set.P[i].id+", "+set.P[j].id+", " +set.P[k].id+") ");
+						//print("TESTING Cir("+set.P[i].id+", "+set.P[j].id+", " +set.P[k].id+") ");
 						for(var l = 0; l < set.P.length; l++){
 							if(i != l && j != l && k != l){
-								s = pointInCircle2(C, set.P[l]);
-								print(set.P[l].id +" is "+ s);
-								//print(set.P[l]);
+								s = pointInCircle(C, set.P[l]);
 								if(s < 0){
-									print(set.P[l].id + ": is outside");
+									//print(set.P[l].id + ": is outside");
 									C = null;
 									break;
 								}
@@ -226,7 +247,7 @@ function minCirc(set){
 						}
 						if(C != null && C.w < Cmin.w){
 							Cmin = C;
-							print("Found smaller circle Cir("+set.P[i].id+", "+set.P[j].id+", " +set.P[k].id+") s: "+s);
+							//print("Found smaller circle Cir("+set.P[i].id+", "+set.P[j].id+", " +set.P[k].id+")");
 						}
 					}
 				}
@@ -234,34 +255,21 @@ function minCirc(set){
 
 		}
 	}
-
-	Cmin.show();
-
-
-//	var p1 = new Point(-11,5, 0, 1);
-//	var p2 = new Point(-3,-4, 0, 2);
-//	var p3 = new Point(2,1, 0, 3);
-//	var C = new Circle3(p2, p3, p1);
-//	C.show();
-//	C.mid.show();
-//	p1.show();
-//	p2.show();
-//	p3.show();
-
+	return Cmin;
 }
 
-function pointInCircle2(C, d){
+function pointInCircle(C, d){
 	var sign;
 	var l = sqrt(pow(C.mid.x - d.x, 2) + pow(C.mid.y - d.y, 2));
-	if(l >= C.w/2){
+	if(l > C.w/2){
 		sign = -1;
 	}else{
 		sign = 1;
 	}
-	//print("In2: "+  sign);
 	return sign;
 }
 
+/*
 function pointInCircle3(a, b, c, d){
 	var adx = a.x - d.x;
 	var ady = a.y - d.y;
@@ -278,3 +286,50 @@ function pointInCircle3(a, b, c, d){
 	var sign = alift*bcdet + blift*cadet + clift*abdet;
 	return sign;
 }
+*/
+
+
+function miniDisc(set){
+	var P = shuffle(set.P);
+	C = new Circle2(P[0], P[1]);
+	for (var i = 2; i < P.length; i++) {
+		if(pointInCircle(C, P[i]) < 0){
+			//print("pointi "+i+" "+set.P[i].id+" is outside");
+			//print(C);
+			C = miniDiscWithPoint(subset(P,0,i), P[i]);
+		}
+	}
+
+	return C
+}
+
+function miniDiscWithPoint(P, q){
+	//print(P);
+	//print(q);
+	P = shuffle(P);
+	C = new Circle2(q, P[0]);
+
+	for (var j = 1; j < P.length; j++) {
+		if(pointInCircle(C, P[j]) < 0){
+			//print("pointj "+P[j].id+" is outside");
+			//print(C);
+			C = miniDiscWith2Points(subset(P, 0, j), P[j], q);
+		}
+	}
+	return C
+}
+
+function miniDiscWith2Points(P, q1, q2){
+	C = new Circle2(q1, q2);
+
+	for (var k = 0; k < P.length; k++) {
+		if(pointInCircle(C, P[k]) < 0){
+			//print("pointk "+P[k].id+" is outside");
+			//print(C);
+			C = new Circle3(q1, q2, P[k]);
+		}
+	}
+	return C;
+
+}
+
