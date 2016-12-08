@@ -19,9 +19,12 @@ function Point(x, y, c, id) {
 
 	this.drawLineThrough = function(len, angle){
 		angle = angle*PI/180;
-
-		stroke(255, 120, 51);
-		line(round(this.x - len/2*sin(angle + HALF_PI) + padding/scl + originX/scl)*scl, round(this.y - len/2*sin(angle) + padding/scl + originY/scl)*scl, round(this.x + len/2*sin(angle + HALF_PI) + padding/scl + originX/scl)*scl, round(this.y + len/2*sin(angle) + padding/scl + originY/scl)*scl);
+		//stroke(255, 150, 51);
+		
+		line(round(this.x - len/2*sin(angle + HALF_PI) 		+ padding/scl + originX/scl)*scl, 
+			round(this.y - len/2*sin(angle)					+ padding/scl + originY/scl)*scl, 
+			round(this.x + len/2*sin(angle + HALF_PI)	 	+ padding/scl + originX/scl)*scl, 
+			round(this.y + len/2*sin(angle) 				+ padding/scl + originY/scl)*scl);
 	}
 }
 
@@ -404,7 +407,7 @@ function minRectArea(polygon){
 			ymin = polygon.P[i];
 	}
 
-	print("y: ("+ymax+", "+ymin+") x:("+xmax+", "+xmin+")");
+	//print("y: ("+ymax+", "+ymin+") x:("+xmax+", "+xmin+")");
 
 	//noFill();
 
@@ -414,9 +417,82 @@ function minRectArea(polygon){
 	//print(s);
 	//rect(round(xmax + padding/scl + originX/scl)*scl, round(ymax + padding/scl + originY/scl)*scl, round(xmin - xmax + padding/scl + originX/scl)*scl, round(ymin - ymax + padding/scl + originY/scl)*scl);
 	//line(round(xmax - 10 + padding/scl + originX/scl)*scl, round(xmax + 10 + padding/scl + originX/scl)*scl, round(xmax - 10 + padding/scl + originY/scl)*scl, round(xmax + padding/scl + originX/scl)*scl)
-	xmax.drawLineThrough(70, 90);
-	xmin.drawLineThrough(70, 90);
-	ymax.drawLineThrough(70, 0);
-	ymin.drawLineThrough(70, 0);
+	//xmax.drawLineThrough(70, 90);
+	//xmin.drawLineThrough(70, 90);
+	//ymax.drawLineThrough(70, 0);
+	//ymin.drawLineThrough(70, 0);
+
+	print("Next xmax is:" + polygon.P[1].id);
+	//print(polygon.P);
+	//polygon.P.length
+	for (var i = 0; i < 1 ; i++) {
+		var p1 = polygon.P[i];
+		var p2 = polygon.P[(i+1) % (polygon.P.length)];
+
+
+		var angle = atan((p1.x - p2.x)/(p1.y - p2.y));
+
+		angle = angle*180/PI;
+		print("ITER: p1: "+p1.id+", p2: "+ p2.id+ ", angle: "+angle+" deg");
+
+		stroke(255, 150, 51);
+		p1.drawLineThrough(20, 90 - angle);
+
+		
+		//rotationMatrix(p1, angle).show();
+		//p1.drawLineThrough(10, 90);
+		var d = 0;
+		for (var j = 0; j < polygon.P.length; j++) {
+			if(i != j){
+				d = distanceP2L(p1, 90 - angle, polygon.P[j]);
+				print("DIST: p1: " + p1.id + ", p2: " + polygon.P[j].id + " is: " + d);
+			}
+		}
+
+		//print("p id " + p.id + " and " + p1.id + " is furtherst apart");
+
+
+
+		//xmin.drawLineThrough(100, 90 - angle);
+
+		//stroke(255, 50, 51);
+		//p1.drawLineThrough(10, 90);
+
+		//stroke(155, 50, 51);
+		//p1.drawLineThrough(10, 0);
+
+
+
+
+	}
+
+}
+
+
+function distanceP2L(P1, theta, point){
+	var len = 10; //Arbitrary
+	theta = theta*PI/180;
+		
+	var p2x = P1.x - len*sin(theta + HALF_PI);
+	var p2y = P1.y - len*sin(theta);
+
+	var P2 = new Point(p2x, p2y, 200, P1.id);
+	P2.show();
+
+	var den = abs( (P2.y - P1.y)*point.x - (P2.x - P1.x)*point.y + P2.x*P1.y - P2.y*P1.x );
+	var num = sqrt( (P2.y - P1.y)*(P2.y - P1.y) + (P2.x - P1.x)*(P2.x - P1.x) );
+
+	return den/num;
+
+	
+}
+
+function rotationMatrix(point, theta){
+
+	theta = theta*PI/180;
+	var xrot = point.x * cos(theta) - point.y * sin(theta);
+	var yrot = point.x * sin(theta) + point.y * cos(theta);
+
+	return new Point(xrot, yrot, 200, point.id);
 
 }

@@ -1,7 +1,7 @@
 var Pset;
 
 var padding = 0;
-var scl = 5;
+var scl = 4;
 var originX; 
 var originY;
 
@@ -22,7 +22,7 @@ function setup() {
 
 
 	var sizeForOneSecondCalculation = 63;
-	var size = 20;
+	var size = 10;
 	for (var i = 0; i < size; i++) {
 		pSet.add(new Point(round(random(-30,30)),round(random(-30,30)), 200, i));
 	}
