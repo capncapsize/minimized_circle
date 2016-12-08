@@ -22,7 +22,7 @@ function setup() {
 
 
 	var sizeForOneSecondCalculation = 63;
-	var size = 63;
+	var size = 20;
 	for (var i = 0; i < size; i++) {
 		pSet.add(new Point(round(random(-30,30)),round(random(-30,30)), 200, i));
 	}
@@ -72,6 +72,15 @@ function setup() {
 	fill(255);
 	text("Improved Time: \t\t\t"+(time/1000)+" sec", 10,20);
 	Cmin2.highlight();
+
+	var P = convexHull(pSet);
+
+	var hullSet = new PointSet();
+	for (var i = 0; i < P.length; i++) {
+		hullSet.add(P[i]);
+	}
+
+	minRectArea(hullSet);
 
 
   	

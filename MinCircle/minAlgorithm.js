@@ -16,6 +16,13 @@ function Point(x, y, c, id) {
 		textSize(8);
 		text(this.id + "(" + this.x + "," + this.y +")", round(this.x + padding/scl + originX/scl)*scl + 2, round(this.y + padding/scl + originY/scl)*scl + 9);
 	}
+
+	this.drawLineThrough = function(len, angle){
+		angle = angle*PI/180;
+
+		stroke(255, 120, 51);
+		line(round(this.x - len/2*sin(angle + HALF_PI) + padding/scl + originX/scl)*scl, round(this.y - len/2*sin(angle) + padding/scl + originY/scl)*scl, round(this.x + len/2*sin(angle + HALF_PI) + padding/scl + originX/scl)*scl, round(this.y + len/2*sin(angle) + padding/scl + originY/scl)*scl);
+	}
 }
 
 function PointSet(){
@@ -59,7 +66,10 @@ function PointSet(){
 	this.connect = function(c){
 		stroke(c);
 		for(var i = this.P.length - 2; i>=0;i--){
-			line(this.P[i].x*scl, this.P[i].y*scl, this.P[i+1].x*scl, this.P[i+1].y*scl);
+			line(round(this.P[i].x + padding/scl + originX/scl)*scl, 
+				round(this.P[i].y + padding/scl + originY/scl)*scl, 
+				round(this.P[i+1].x + padding/scl + originX/scl)*scl, 
+				round(this.P[i+1].y + padding/scl + originY/scl)*scl);
 		}
 	}
 
@@ -333,3 +343,80 @@ function miniDiscWith2Points(P, q1, q2){
 
 }
 
+function convexHull(Set) {
+
+	if(Set.qsort('y')){
+		Set.qsort('x');
+	}
+
+	var lower = new PointSet();
+	var upper = new PointSet();
+
+	for(var i = Set.P.length - 1; i>=0;i--){
+		while(upper.P.length >= 2 && ccw(upper.P[upper.P.length - 2], upper.P[upper.P.length - 1], Set.P[i]) <= 0){
+			upper.P.pop();
+		}
+		upper.add(Set.P[i]);
+	}
+
+	for (var i = 0; i < Set.P.length; i++) {
+		while(lower.P.length >= 2 && ccw(lower.P[lower.P.length - 2], lower.P[lower.P.length - 1], Set.P[i]) <= 0){
+			lower.P.pop();
+		}
+		lower.add(Set.P[i])
+	}
+
+	Set.show();
+
+	upper.connect('red');
+	lower.connect('red');
+
+	upper.P.pop();
+	lower.P.pop();
+
+	return concat(upper.P, lower.P);
+
+}
+
+function ccw(p1, p2, p3) {
+   return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x)
+}
+
+function minRectArea(polygon){
+	print("-----MIN RECT AREA-----")
+	var xmax = polygon.P[0];
+	var ymax = polygon.P[0];
+	var xmin = xmax;
+	var ymin = ymax;
+	var x, y;
+
+	for (var i = 0; i < polygon.P.length; i++) {
+		x = polygon.P[i].x;
+		y = polygon.P[i].y;
+		if(xmax.x < x)
+			xmax = polygon.P[i];
+		else if(xmin.x > x)
+			xmin = polygon.P[i];
+
+		if(ymax.y < y)
+			ymax = polygon.P[i];
+		else if(ymin.y > y)
+			ymin = polygon.P[i];
+	}
+
+	print("y: ("+ymax+", "+ymin+") x:("+xmax+", "+xmin+")");
+
+	//noFill();
+
+	//s = sin(PI);
+	//print(s);
+	//s = sin(HALF_PI);
+	//print(s);
+	//rect(round(xmax + padding/scl + originX/scl)*scl, round(ymax + padding/scl + originY/scl)*scl, round(xmin - xmax + padding/scl + originX/scl)*scl, round(ymin - ymax + padding/scl + originY/scl)*scl);
+	//line(round(xmax - 10 + padding/scl + originX/scl)*scl, round(xmax + 10 + padding/scl + originX/scl)*scl, round(xmax - 10 + padding/scl + originY/scl)*scl, round(xmax + padding/scl + originX/scl)*scl)
+	xmax.drawLineThrough(70, 90);
+	xmin.drawLineThrough(70, 90);
+	ymax.drawLineThrough(70, 0);
+	ymin.drawLineThrough(70, 0);
+
+}
