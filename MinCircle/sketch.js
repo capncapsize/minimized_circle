@@ -57,15 +57,15 @@ function setup() {
   	//var s = pointInCircle2(C, pSet.P[0])
   	//print("S: "+ s);
 
-  	
+  	print("--- BRUTE FORCE MIN CIRCLE ---");
   	var startTime = millis();
    	var Cmin = minCirc(pSet);
     time = millis() - startTime;
    	fill(255);
 	text("Brute Force Time: \t"+(time/1000)+" sec", 10,10);
-
 	Cmin.show();
 
+	print("--- RANDOM ALGO MIN CIRCLE ---");
 	startTime = millis();
 	var Cmin2 = miniDisc(pSet); 
 	time = millis() - startTime;
@@ -73,6 +73,8 @@ function setup() {
 	text("Improved Time: \t\t\t"+(time/1000)+" sec", 10,20);
 	Cmin2.highlight();
 
+	print("--- MIN RECTANGLE ---");
+	print("Calculating convexHull");
 	var P = convexHull(pSet);
 
 	var hullSet = new PointSet();
@@ -80,7 +82,12 @@ function setup() {
 		hullSet.add(P[i]);
 	}
 
-	minRectArea(hullSet);
+	print("min Rectangle");
+	var R = minRectArea(hullSet);
+
+	R.show();
+
+
 
 
   	

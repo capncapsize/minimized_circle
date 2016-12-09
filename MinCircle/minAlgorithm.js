@@ -385,6 +385,40 @@ function ccw(p1, p2, p3) {
    return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x)
 }
 
+function Rectangle(){
+	this.p1;
+	this.p2;
+	this.p3;
+	this.p4;
+
+	this.rot;
+
+	this.update = function(p1, p2, p3, p4, rot){
+		this.p1 = p1;
+		this.p2 = p2;
+		this.p3 = p3;
+		this.p4 = p4;
+
+		this.rot = rot;
+	}
+
+	this.show = function(){
+		stroke(255, 150, 51);
+		this.p1.drawLineThrough(180, 90 - this.rot);
+
+		stroke(255, 150, 51);
+		this.p2.drawLineThrough(180, 90 - this.rot);
+
+		stroke(255, 150, 171);
+		this.p2.drawLineThrough(40, -this.rot);
+
+		stroke(255, 150, 51);
+		this.p3.drawLineThrough(180, -this.rot);
+		this.p4.drawLineThrough(180, -this.rot);
+
+	}
+}
+
 function minRectArea(polygon){
 	print("-----MIN RECT AREA-----")
 	var xmax = polygon.P[0];
@@ -407,25 +441,10 @@ function minRectArea(polygon){
 			ymin = polygon.P[i];
 	}
 
-	//print("y: ("+ymax+", "+ymin+") x:("+xmax+", "+xmin+")");
+	var A = -1;
+	var r = new Rectangle();
 
-	//noFill();
-
-	//s = sin(PI);
-	//print(s);
-	//s = sin(HALF_PI);
-	//print(s);
-	//rect(round(xmax + padding/scl + originX/scl)*scl, round(ymax + padding/scl + originY/scl)*scl, round(xmin - xmax + padding/scl + originX/scl)*scl, round(ymin - ymax + padding/scl + originY/scl)*scl);
-	//line(round(xmax - 10 + padding/scl + originX/scl)*scl, round(xmax + 10 + padding/scl + originX/scl)*scl, round(xmax - 10 + padding/scl + originY/scl)*scl, round(xmax + padding/scl + originX/scl)*scl)
-	//xmax.drawLineThrough(70, 90);
-	//xmin.drawLineThrough(70, 90);
-	//ymax.drawLineThrough(70, 0);
-	//ymin.drawLineThrough(70, 0);
-
-	print("Next xmax is:" + polygon.P[1].id);
-	//print(polygon.P);
-	//polygon.P.length
-	for (var i = 0; i < 1 ; i++) {
+	for (var i = 0; i < polygon.P.length ; i++) {
 		var p1 = polygon.P[i];
 		var p2 = polygon.P[(i+1) % (polygon.P.length)];
 		var p3, p4, p5;
@@ -435,15 +454,82 @@ function minRectArea(polygon){
 
 		angle = angle*180/PI;
 		print("ITER: p1: "+p1.id+", p2: "+ p2.id+ ", angle: "+angle+" deg");
-
-		stroke(255, 150, 51);
-		p1.drawLineThrough(80, 90 - angle);
-
 		
-		//rotationMatrix(p1, angle).show();
+
+		p3 = findOppositePointFromVertex(p1, 90 - angle, polygon);
+		
+		var perpendicularAngle = -angle;
+		p4 = findOppositePointFromVertex(p3, perpendicularAngle, polygon);
+		p5 = findOppositePointFromVertex(p4, perpendicularAngle, polygon);
+
+
+		var w = distanceP2P(p1, p3);
+		var h = distanceP2P(p4, p5);
+
+		if(A == -1 || A > w*h ){
+			A = w*h;
+			r.update(p1, p3, p4, p5, angle);
+			print("Smaller Square Found: Width: "+w+" units, Height: "+h+" units, Area: "+A+" sq.units");
+		}	
+	}
+
+	return r;
+}
+
+function findOppositePointFromVertex(P1, theta, polygon){
+	var dmax = 0;
+	var p;
+	for (var j = 0; j < polygon.P.length; j++) {
+			d = distanceP2L(P1, theta, polygon.P[j]);
+			if(d > dmax){
+				dmax = d;
+				p = polygon.P[j];
+			}
+	}
+
+	return p;
+}
+
+function distanceP2P(P1, P2){
+	return sqrt( (P2.y - P1.y)*(P2.y - P1.y) + (P2.x - P1.x)*(P2.x - P1.x) );
+}
+
+
+function distanceP2L(P1, theta, point){
+	var len = 10; //Arbitrary
+	theta = theta*PI/180;
+		
+	var p2x = P1.x - len*sin(theta + HALF_PI);
+	var p2y = P1.y - len*sin(theta);
+
+	var P2 = new Point(p2x, p2y, 200, P1.id);
+	//P2.show();
+
+	var den = abs( (P2.y - P1.y)*point.x - (P2.x - P1.x)*point.y + P2.x*P1.y - P2.y*P1.x );
+	var num = sqrt( (P2.y - P1.y)*(P2.y - P1.y) + (P2.x - P1.x)*(P2.x - P1.x) );
+
+	return den/num;	
+}
+
+function rotationMatrix(point, theta){
+
+	theta = theta*PI/180;
+	var xrot = point.x * cos(theta) - point.y * sin(theta);
+	var yrot = point.x * sin(theta) + point.y * cos(theta);
+
+	return new Point(xrot, yrot, 200, point.id);
+
+}
+
+
+
+
+
+
+	//rotationMatrix(p1, angle).show();
 		//p1.drawLineThrough(10, 90);
 
-		print("----FIND OPPOSITE POINT-----");
+		/*print("----FIND OPPOSITE POINT-----");
 		var dmax = 0;
 		for (var j = 0; j < polygon.P.length; j++) {
 			if(i != j){
@@ -499,12 +585,12 @@ function minRectArea(polygon){
 				}
 				
 			}
-		}	
+		}*/
 
-		print("PERP.OPPO.DIST: p1: " + p4.id + ", p2: " + p5.id + " is: " + dmax);
+		//print("PERP.OPPO.DIST: p1: " + p4.id + ", p2: " + p5.id + " is: " + dmax);
 
-		stroke(255, 150, 51);
-		p5.drawLineThrough(80, perpendicularAngle);	
+		//stroke(255, 150, 51);
+		//p5.drawLineThrough(80, perpendicularAngle);	
 
 
 
@@ -516,39 +602,3 @@ function minRectArea(polygon){
 
 		//stroke(155, 50, 51);
 		//p1.drawLineThrough(10, 0);
-
-
-
-
-	}
-
-}
-
-
-function distanceP2L(P1, theta, point){
-	var len = 10; //Arbitrary
-	theta = theta*PI/180;
-		
-	var p2x = P1.x - len*sin(theta + HALF_PI);
-	var p2y = P1.y - len*sin(theta);
-
-	var P2 = new Point(p2x, p2y, 200, P1.id);
-	P2.show();
-
-	var den = abs( (P2.y - P1.y)*point.x - (P2.x - P1.x)*point.y + P2.x*P1.y - P2.y*P1.x );
-	var num = sqrt( (P2.y - P1.y)*(P2.y - P1.y) + (P2.x - P1.x)*(P2.x - P1.x) );
-
-	return den/num;
-
-	
-}
-
-function rotationMatrix(point, theta){
-
-	theta = theta*PI/180;
-	var xrot = point.x * cos(theta) - point.y * sin(theta);
-	var yrot = point.x * sin(theta) + point.y * cos(theta);
-
-	return new Point(xrot, yrot, 200, point.id);
-
-}
