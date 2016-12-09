@@ -428,6 +428,7 @@ function minRectArea(polygon){
 	for (var i = 0; i < 1 ; i++) {
 		var p1 = polygon.P[i];
 		var p2 = polygon.P[(i+1) % (polygon.P.length)];
+		var p3, p4, p5;
 
 
 		var angle = atan((p1.x - p2.x)/(p1.y - p2.y));
@@ -436,20 +437,75 @@ function minRectArea(polygon){
 		print("ITER: p1: "+p1.id+", p2: "+ p2.id+ ", angle: "+angle+" deg");
 
 		stroke(255, 150, 51);
-		p1.drawLineThrough(20, 90 - angle);
+		p1.drawLineThrough(80, 90 - angle);
 
 		
 		//rotationMatrix(p1, angle).show();
 		//p1.drawLineThrough(10, 90);
-		var d = 0;
+
+		print("----FIND OPPOSITE POINT-----");
+		var dmax = 0;
 		for (var j = 0; j < polygon.P.length; j++) {
 			if(i != j){
 				d = distanceP2L(p1, 90 - angle, polygon.P[j]);
-				print("DIST: p1: " + p1.id + ", p2: " + polygon.P[j].id + " is: " + d);
+				if(d > dmax){
+					dmax = d;
+					p3 = polygon.P[j];
+				}
+				
 			}
 		}
 
+
+		print("DIST: p1: " + p1.id + ", p2: " + p3.id + " is: " + dmax);
+
+		stroke(255, 150, 51);
+		p3.drawLineThrough(80, 90 - angle);
+
+		stroke(255, 150, 171);
+		p3.drawLineThrough(40, -angle);
+
+		var perpendicularAngle = -angle;
+
+
+		print("----FIND PERPENDICULAR POINT----");
+		dmax = 0;
+		for (var j = 0; j < polygon.P.length; j++) {
+			if(true){
+				d = distanceP2L(p3, perpendicularAngle, polygon.P[j]);
+				if(d > dmax){
+					dmax = d;
+					p4 = polygon.P[j];
+				}
+				
+			}
+		}
+
+		print("PERP.DIST: p1: " + p3.id + ", p2: " + p4.id + " is: " + dmax);
+
+		stroke(255, 150, 51);
+		p4.drawLineThrough(80, perpendicularAngle);
+
 		//print("p id " + p.id + " and " + p1.id + " is furtherst apart");
+	
+		print("----FIND OPPOSITE OF PERPENDICULAR POINT----");
+		dmax = 0;
+		for (var j = 0; j < polygon.P.length; j++) {
+			if(true){
+				d = distanceP2L(p4, perpendicularAngle, polygon.P[j]);
+				if(d > dmax){
+					dmax = d;
+					p5 = polygon.P[j];
+				}
+				
+			}
+		}	
+
+		print("PERP.OPPO.DIST: p1: " + p4.id + ", p2: " + p5.id + " is: " + dmax);
+
+		stroke(255, 150, 51);
+		p5.drawLineThrough(80, perpendicularAngle);	
+
 
 
 
