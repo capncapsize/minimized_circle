@@ -51,12 +51,6 @@ function setup() {
   	background(51);
   	pSet.show();
 
-
-  	//var C = new Circle3(pSet.P[1], pSet.P[2], pSet.P[3]);
-  	//C.show();
-  	//var s = pointInCircle2(C, pSet.P[0])
-  	//print("S: "+ s);
-
   	print("--- BRUTE FORCE MIN CIRCLE ---");
   	var startTime = millis();
    	var Cmin = minCirc(pSet);
@@ -86,10 +80,6 @@ function setup() {
 	var R = minRectArea(hullSet);
 
 	R.show();
-
-
-
-
   	
 
 /*
@@ -118,11 +108,6 @@ function setup() {
 
 function draw() {
 	frameRate(1);
-
-
-  //	background(51);
-  //	pSet.show();
-  //	minCirc(pSet);
 }
 
 function mouseReleased(){

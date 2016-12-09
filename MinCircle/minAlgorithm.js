@@ -11,8 +11,6 @@ function Point(x, y, c, id) {
 		rect(round(this.x + padding/scl + originX/scl)*scl, round(this.y + padding/scl + originY/scl)*scl, 2, 2);
 		stroke(0)
 		fill(255);
-		//rect(round(this.x + padding/scl + originX/scl)*scl, round(this.y + padding/scl + originY/scl)*scl, 1, 1);
-		//fill(0);
 		textSize(8);
 		text(this.id + "(" + this.x + "," + this.y +")", round(this.x + padding/scl + originX/scl)*scl + 2, round(this.y + padding/scl + originY/scl)*scl + 9);
 	}
@@ -60,7 +58,6 @@ function PointSet(){
 	}
 
 	this.show = function(){
-		//this.connect(255);
 		for (var i = this.P.length - 1; i >= 0; i--) {
     		this.P[i].show();
   		}
@@ -97,8 +94,8 @@ function Circle2(p1, p2){
 	this.p1 = p1;
 	this.p2 = p2;
 
-	this.mid;// = new Point((this.p1.x + this.p2.x)/2, (this.p1.y + this.p2.y)/2, 0, 5);
-	this.w;// = sqrt(pow(this.p1.x - this.p2.x, 2) + pow(this.p1.y - this.p2.y, 2));
+	this.mid;
+	this.w;
 
 	this.reCreate = function(){
 		var dx = (this.p1.x + this.p2.x)/2;
@@ -150,28 +147,8 @@ function Circle3(p1, p2, p3){
 		var p3 = this.p3;
 	}
 
-/*		var PQmid = new Point((P.x + Q.x)/2, (P.y + Q.y)/2, 0, 2);
-		var QRmid = new Point((Q.x + R.x)/2, (Q.y + R.y)/2, 0, 2);
-
-		var PQgrad = (Q.y - P.y) / (Q.x - P.x);
-		var QRgrad = (R.y - Q.y) / (R.x - Q.x);
-
-		var L1grad = -1/PQgrad;
-		var L2grad = -1/QRgrad;
-
-		print("PQmid: ("+PQmid.x+", "+PQmid.y+")");
-		print("QRmid: ("+QRmid.x+", "+QRmid.y+")");
-		print("PQgrad: "+PQgrad+" QRgrad: "+QRgrad);
-
-		var x = (-L1grad*PQmid.x + PQmid.y - QRmid.y + L2grad*QRmid.x)/(L2grad - L1grad);
-		var y = L1grad*(x - PQmid.x) + PQmid.y;*/
-
-
-
 		var m1 = (p2.y - p1.y) / (p2.x - p1.x);
         var m2 = (p3.y - p2.y) / (p3.x - p2.x);
-
-        //print("m1: "+m1+",m2: "+m2);
 
         var x = (m1 * m2 * (p1.y - p3.y) - m1 * (p2.x + p3.x) + m2 * (p1.x + p2.x)) / (2 * (m2 - m1));
         if(m2 == 0){
@@ -179,8 +156,6 @@ function Circle3(p1, p2, p3){
     	}else{
     		var y = (-1 / m2) * (x - (p2.x + p3.x) / 2) + (p2.y + p3.y) / 2;
     	}
-
-        //print("x: "+x+",y: "+y);
 
         this.mid = new Point(x, y, 0, 2);
         this.w = sqrt(pow(p1.x - x, 2) + pow(p1.y - y, 2))*2;
@@ -212,8 +187,8 @@ function minCirc(set){
 	var C;
 	var s;
 	var Cmin = new Circle2(new Point(-200,0,0,1), new Point(200,0,0,1));
+	
 	//print("---TWO POINT---");
-	//Two point circle
 	for (var i = 0; i < set.P.length; i++) {
 		for (var j = 0; j < set.P.length; j++) {
 			if(i != j){
@@ -238,9 +213,8 @@ function minCirc(set){
 			}
 		}
 	}
-	//Cmin.show();
+
 	//print("---THREE POINT---");
-	//Three point circle
 	for (var i = 0; i < set.P.length; i++){
 		for (var j = 0; j < set.P.length; j++){
 			if(i != j){
@@ -282,26 +256,6 @@ function pointInCircle(C, d){
 	return sign;
 }
 
-/*
-function pointInCircle3(a, b, c, d){
-	var adx = a.x - d.x;
-	var ady = a.y - d.y;
-	var bdx = b.x - d.x;
-	var bdy = b.y - d.y;
-	var cdx = c.x - d.x;
-	var cdy = c.y - d.y;
-	var abdet = adx*bdy - bdx*ady;
-	var bcdet = bdx*cdy - cdx*bdy;
-	var cadet = cdx*ady - adx*cdy;
-	var alift = adx*adx + ady*ady;
-	var blift = bdx*bdx + bdy*bdy;
-	var clift = cdx*cdx + cdy*cdy;
-	var sign = alift*bcdet + blift*cadet + clift*abdet;
-	return sign;
-}
-*/
-
-
 function miniDisc(set){
 	var P = shuffle(set.P);
 	C = new Circle2(P[0], P[1]);
@@ -317,15 +271,11 @@ function miniDisc(set){
 }
 
 function miniDiscWithPoint(P, q){
-	//print(P);
-	//print(q);
 	P = shuffle(P);
 	C = new Circle2(q, P[0]);
 
 	for (var j = 1; j < P.length; j++) {
 		if(pointInCircle(C, P[j]) < 0){
-			//print("pointj "+P[j].id+" is outside");
-			//print(C);
 			C = miniDiscWith2Points(subset(P, 0, j), P[j], q);
 		}
 	}
@@ -482,7 +432,6 @@ function distanceP2L(P1, theta, point){
 	var p2y = P1.y - len*sin(theta);
 
 	var P2 = new Point(p2x, p2y, 200, P1.id);
-	//P2.show();
 
 	var den = abs( (P2.y - P1.y)*point.x - (P2.x - P1.x)*point.y + P2.x*P1.y - P2.y*P1.x );
 	var num = distanceP2P(P1, P2);
@@ -499,85 +448,3 @@ function rotationMatrix(point, theta){
 	return new Point(xrot, yrot, 200, point.id);
 
 }
-
-
-
-
-
-
-	//rotationMatrix(p1, angle).show();
-		//p1.drawLineThrough(10, 90);
-
-		/*print("----FIND OPPOSITE POINT-----");
-		var dmax = 0;
-		for (var j = 0; j < polygon.P.length; j++) {
-			if(i != j){
-				d = distanceP2L(p1, 90 - angle, polygon.P[j]);
-				if(d > dmax){
-					dmax = d;
-					p3 = polygon.P[j];
-				}
-				
-			}
-		}
-
-
-		print("DIST: p1: " + p1.id + ", p2: " + p3.id + " is: " + dmax);
-
-		stroke(255, 150, 51);
-		p3.drawLineThrough(80, 90 - angle);
-
-		stroke(255, 150, 171);
-		p3.drawLineThrough(40, -angle);
-
-		var perpendicularAngle = -angle;
-
-
-		print("----FIND PERPENDICULAR POINT----");
-		dmax = 0;
-		for (var j = 0; j < polygon.P.length; j++) {
-			if(true){
-				d = distanceP2L(p3, perpendicularAngle, polygon.P[j]);
-				if(d > dmax){
-					dmax = d;
-					p4 = polygon.P[j];
-				}
-				
-			}
-		}
-
-		print("PERP.DIST: p1: " + p3.id + ", p2: " + p4.id + " is: " + dmax);
-
-		stroke(255, 150, 51);
-		p4.drawLineThrough(80, perpendicularAngle);
-
-		//print("p id " + p.id + " and " + p1.id + " is furtherst apart");
-	
-		print("----FIND OPPOSITE OF PERPENDICULAR POINT----");
-		dmax = 0;
-		for (var j = 0; j < polygon.P.length; j++) {
-			if(true){
-				d = distanceP2L(p4, perpendicularAngle, polygon.P[j]);
-				if(d > dmax){
-					dmax = d;
-					p5 = polygon.P[j];
-				}
-				
-			}
-		}*/
-
-		//print("PERP.OPPO.DIST: p1: " + p4.id + ", p2: " + p5.id + " is: " + dmax);
-
-		//stroke(255, 150, 51);
-		//p5.drawLineThrough(80, perpendicularAngle);	
-
-
-
-
-		//xmin.drawLineThrough(100, 90 - angle);
-
-		//stroke(255, 50, 51);
-		//p1.drawLineThrough(10, 90);
-
-		//stroke(155, 50, 51);
-		//p1.drawLineThrough(10, 0);
