@@ -82,7 +82,7 @@ function setup() {
 		hullSet.add(P[i]);
 	}
 
-	print("min Rectangle");
+	print("ROTATING CALIPERS");
 	var R = minRectArea(hullSet);
 
 	R.show();

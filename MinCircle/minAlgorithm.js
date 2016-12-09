@@ -421,25 +421,6 @@ function Rectangle(){
 
 function minRectArea(polygon){
 	print("-----MIN RECT AREA-----")
-	var xmax = polygon.P[0];
-	var ymax = polygon.P[0];
-	var xmin = xmax;
-	var ymin = ymax;
-	var x, y;
-
-	for (var i = 0; i < polygon.P.length; i++) {
-		x = polygon.P[i].x;
-		y = polygon.P[i].y;
-		if(xmax.x < x)
-			xmax = polygon.P[i];
-		else if(xmin.x > x)
-			xmin = polygon.P[i];
-
-		if(ymax.y < y)
-			ymax = polygon.P[i];
-		else if(ymin.y > y)
-			ymin = polygon.P[i];
-	}
 
 	var A = -1;
 	var r = new Rectangle();
@@ -451,20 +432,18 @@ function minRectArea(polygon){
 
 
 		var angle = atan((p1.x - p2.x)/(p1.y - p2.y));
-
 		angle = angle*180/PI;
-		print("ITER: p1: "+p1.id+", p2: "+ p2.id+ ", angle: "+angle+" deg");
 		
-
+		//Find the mirror calliper that follows p1
 		p3 = findOppositePointFromVertex(p1, 90 - angle, polygon);
 		
+		//Find the perpendicular callipers following p3
 		var perpendicularAngle = -angle;
 		p4 = findOppositePointFromVertex(p3, perpendicularAngle, polygon);
 		p5 = findOppositePointFromVertex(p4, perpendicularAngle, polygon);
 
-
-		var w = distanceP2P(p1, p3);
-		var h = distanceP2P(p4, p5);
+		var w = distanceP2L(p1, 90 - angle, p3);
+		var h = distanceP2L(p4, perpendicularAngle, p5);
 
 		if(A == -1 || A > w*h ){
 			A = w*h;
@@ -506,7 +485,7 @@ function distanceP2L(P1, theta, point){
 	//P2.show();
 
 	var den = abs( (P2.y - P1.y)*point.x - (P2.x - P1.x)*point.y + P2.x*P1.y - P2.y*P1.x );
-	var num = sqrt( (P2.y - P1.y)*(P2.y - P1.y) + (P2.x - P1.x)*(P2.x - P1.x) );
+	var num = distanceP2P(P1, P2);
 
 	return den/num;	
 }
